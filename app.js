@@ -57,9 +57,9 @@ let backgroundMusic = 'https://www.youtube.com/watch?v=JTszj4iZUMw' // Jolly Rog
     if(botInChat || onlyBots){
       channelLeft.leave()
     }
-
-    return
   }
+
+  if(channelEntered == null) return
 
    let numUsersInChat = channelEntered.members.size
    if(numUsersInChat === 1){ // only user in chat
