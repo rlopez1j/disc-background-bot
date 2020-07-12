@@ -6,7 +6,7 @@ const client = new Discord.Client()
 
 client.once('ready', () => console.log('ready!'))
 client.login(process.env.DISCORD_CLIENT_SECRET)
-let backgroundMusic = 'https://www.youtube.com/watch?v=fECqOtrPRjA'
+let backgroundMusic = 'https://www.youtube.com/watch?v=JTszj4iZUMw' // Jolly Roger Bay 10 Hours - Super Mario 64
 
  client.on('message', (message) => {
    const availableCommands = {
