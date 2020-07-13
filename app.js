@@ -1,78 +1,34 @@
 const Discord = require('discord.js')
 const ytdl = require('ytdl-core')
+const BotCommands = require('./modules/commands')
+const MusicPlayer = require('./services/music-player')
+const Bot = require('./services/bot')
 
 require('dotenv').config()
 const client = new Discord.Client()
 
-client.once('ready', () => console.log('ready!'))
+let musicPlayer
+let bot
+
+client.once('ready', () =>{
+  musicPlayer = new MusicPlayer('https://www.youtube.com/watch?v=JTszj4iZUMw')
+  bot = new Bot()
+})
+
 client.login(process.env.DISCORD_CLIENT_SECRET)
-let backgroundMusic = 'https://www.youtube.com/watch?v=JTszj4iZUMw' // Jolly Roger Bay 10 Hours - Super Mario 64
 
- client.on('message', (message) => {
-   const availableCommands = {
-     'leave': {
-       run: () => {
-         for(const connection of client.voice.connections.values()){
-           connection.disconnect()
-         }
-       }
-     },
-   }
-   if(message.author.bot) return
+client.on('message', async (message) => {
+  if(message.author.bot) return
+  if(!message.content.startsWith(']')) return
 
-   if(!message.content.startsWith(']')) return
+  let commandArgs = message.content.split(' ')
+  commandArgs[0] = commandArgs[0].substr(1) // to remove the ']' character
 
-   const commandArgs = message.content.split(' ')
-   const commandString = commandArgs[0].substr(1) // to remove the ']' character
-   const command = availableCommands[commandString]
-
-   if(typeof command !== 'undefined'){
-     command.run()
-   }
- })
+  await BotCommands.run(message.channel, commandArgs)
+})
 
  client.on('voiceStateUpdate', (previousDiscState, currentDiscState) => {
-  const channelEntered = currentDiscState.channel
-  const channelLeft = previousDiscState.channel
-
-  if(channelEntered !== null){
-    for(const user of channelEntered.members.values()){
-      if(user.user.username === 'Groovy'){
-        channelEntered.leave()
-        return
-      }
-    }
-  }
-
-  if(channelLeft !== null){  
-    const botInChat = channelLeft.members.has(client.user.id)
-    let onlyBots = true
-
-    for(const user of channelLeft.members.values()){
-      if(!user.user.bot){
-        onlyBots = false
-      }
-    }
-
-    if(botInChat || onlyBots){
-      channelLeft.leave()
-    }
-  }
-
-  if(channelEntered == null) return
-
-   let numUsersInChat = channelEntered.members.size
-   if(numUsersInChat === 1){ // only user in chat
-    console.log('play music🎵') 
-
-    currentDiscState.channel.join()
-    const broadcast = client.voice.createBroadcast()
-    broadcast.play(ytdl(backgroundMusic))
-      .on('finish', () => currentDiscState.channel.leave())
-    for(const connection of client.voice.connections.values()){
-      connection.play(broadcast)
-    }
-   }
+   
  })
 
 
