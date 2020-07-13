@@ -1,4 +1,4 @@
-import Bot from require('../services/bot')
+const Bot = require('../services/bot')
 
 const commands = {
   'leave': {
@@ -12,7 +12,7 @@ const commands = {
   },
 
   'help': {
-    run: (channel, args) => await Bot.sendMessage(channel, 'I\'m too lazy to type a help command')
+    run: async (channel, args) => await Bot.sendMessage(channel, 'I\'m too lazy to type a help command')
   },
 
   'add': {

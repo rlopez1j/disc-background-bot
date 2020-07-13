@@ -11,13 +11,14 @@ let musicPlayer
 let bot
 
 client.once('ready', () =>{
-  musicPlayer = new MusicPlayer('https://www.youtube.com/watch?v=JTszj4iZUMw')
-  bot = new Bot()
+  bot = new Bot(new MusicPlayer('https://www.youtube.com/watch?v=JTszj4iZUMw'))
+  console.log('ready!')
 })
 
 client.login(process.env.DISCORD_CLIENT_SECRET)
 
 client.on('message', async (message) => {
+  // remember to get member channel obj
   if(message.author.bot) return
   if(!message.content.startsWith(']')) return
 
@@ -28,7 +29,23 @@ client.on('message', async (message) => {
 })
 
  client.on('voiceStateUpdate', (previousDiscState, currentDiscState) => {
-   
+  const currentChannel = currentDiscState.channel
+  const previousChannel = previousDiscState.channel
+  const isGroovy = currentDiscState.member.nickname === 'Groovy' ? true : false
+  const channelNotEmpty = previousChannel && previousChannel.members.size > 1 ? true : false
+  console.log('is prev empty', channelNotEmpty)
+  
+  if(previousChannel === null && currentChannel !== null){
+  } else if(previousChannel !== null && currentChannel === null){
+    bot.leaveOrStay(currentChannel, isGroovy)
+    return
+  } else if((currentChannel.members.size === previousChannel.members.size) ||
+            !(previousChannel.members.size === 0 || bot.inVoiceChat)){
+    console.log('do nothin')
+    return
+  }
+
+  bot.joinOrNot(currentChannel, isGroovy, !channelNotEmpty)
  })
 
 
