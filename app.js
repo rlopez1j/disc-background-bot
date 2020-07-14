@@ -32,21 +32,20 @@ client.on('message', async (message) => {
   const currentChannel = currentDiscState.channel
   const previousChannel = previousDiscState.channel
   const isGroovy = currentDiscState.member.nickname === 'Groovy' ? true : false
-  const channelNotEmpty = previousChannel && previousChannel.members.size > 1 ? true : false
-  console.log('is prev empty', channelNotEmpty)
-  
-  if(previousChannel === null && currentChannel !== null){
-  } else if(previousChannel !== null && currentChannel === null){
-    bot.leaveOrStay(currentChannel, isGroovy)
-    return
-  } else if((currentChannel.members.size === previousChannel.members.size) ||
-            !(previousChannel.members.size === 0 || bot.inVoiceChat)){
-    console.log('do nothin')
-    return
-  }
 
-  bot.joinOrNot(currentChannel, isGroovy, !channelNotEmpty)
- })
+  if(previousChannel === null && currentChannel !== null){
+    bot.joinOrNot(currentChannel, isGroovy)
+  } else if(previousChannel !== null && currentChannel === null){
+    bot.leaveOrStay(previousChannel, isGroovy)
+    return
+  } else{
+    if(currentChannel.id === previousChannel.id){
+      console.log('do nothin')
+      return
+    }
+    bot.joinOrNot(currentChannel, isGroovy)
+  }
+})
 
 
 
